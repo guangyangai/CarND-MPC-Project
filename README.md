@@ -4,12 +4,49 @@ Self-Driving Car Engineer Nanodegree Program
 ---
 ## Summary 
 ### Description of the model (including the state, actuators and update equations)
+State variables:  px (x coordinate), py(x coordinate), psi(orientation), v(velocity), cte(location tracking error), epsi(orientation tracking error);
 
+Actuator variables: steering and throttle 
+
+Constraints 
+
+Objective function:
+minimize tracking error:
+```    
+for (int t = 0; t < N; t++) {
+      fg[0] += 2000*CppAD::pow(vars[cte_start + t], 2);
+      fg[0] += 2000*CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
+    }
+```
+minimize steering and throttle, and very importantly big turns when vehicle is running fast 
+```
+for (int t = 0; t < N - 1; t++) {
+  fg[0] += CppAD::pow(vars[delta_start + t], 2);
+  fg[0] += CppAD::pow(vars[a_start + t], 2);
+  //penalize big turn when speed is high
+  fg[0] += 1000*CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
+}
+```
+minimize changes in steering and throttle (hard break or pressing hard on pedals), 
+```
+for (int t = 0; t < N - 2; t++) {
+  //in our case, we do need big turn
+  fg[0] += 200 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+  //penalize less on break
+  fg[0] += 50 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+}
+```
 ### Choice of Parameters
+Since the road orientation (the curvature) changes quite often, I chose 25 time steps (N) for the project with dt of 0.05s, that seems to be a reasonable choice with enough estimations going forward. 
+
+Different from the lecture, since the track has quite a few big turns, for this project, in order to make the vehicle finish one lap, the throttle and big angle turns need to be penalized less.
 
 ### Polynomial fitting
+Since the , location of the lane marks should be transformed to vehicle coordinates.
 
 ### Handling Latency
+To compensate latency, state is predicted after a certain latency.
 
 ## Dependencies
 
