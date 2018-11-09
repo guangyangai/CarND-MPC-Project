@@ -2,6 +2,14 @@
 Self-Driving Car Engineer Nanodegree Program
 
 ---
+## Summary 
+### Description of the model (including the state, actuators and update equations)
+
+### Choice of Parameters
+
+### Polynomial fitting
+
+### Handling Latency
 
 ## Dependencies
 
