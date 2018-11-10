@@ -33,41 +33,27 @@ Actuator variables: steering (\delta) and throttle (a)
 *Objective function*
 
 minimize tracking error:
-```    
-for (int t = 0; t < N; t++) {
-      fg[0] += 100*CppAD::pow(vars[cte_start + t], 2);
-      fg[0] += 100*CppAD::pow(vars[epsi_start + t], 2);
-      fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
-    }
-```
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\sum&space;w_1cte^2&space;&plus;&space;w_2e\psi^2&space;&plus;&space;w_3(v-v_{ref})^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\sum&space;w_1cte^2&space;&plus;&space;w_2e\psi^2&space;&plus;&space;w_3(v-v_{ref})^2" title="\sum w_1cte^2 + w_2e\psi^2 + w_3(v-v_{ref})^2" /></a>
+
 minimize steering and throttle, and very importantly big turns when vehicle is running fast 
-```
-for (int t = 0; t < N - 1; t++) {
-  fg[0] += CppAD::pow(vars[delta_start + t], 2);
-  fg[0] += CppAD::pow(vars[a_start + t], 2);
-  //penalize big turn when speed is high
-  fg[0] += 1000*CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2);
-}
-```
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\sum&space;w_4\delta^2&space;&plus;&space;w_5a^2&space;&plus;&space;w_6(v*\delta)^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\sum&space;w_4\delta^2&space;&plus;&space;w_5a^2&space;&plus;&space;w_6(v*\delta)^2" title="\sum w_4\delta^2 + w_5a^2 + w_6(v*\delta)^2" /></a>
+
 minimize changes in steering and throttle (hard break or pressing hard on pedals), 
-```
-for (int t = 0; t < N - 2; t++) {
-  //in our case, we do need big turn
-  fg[0] += 200 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-  //penalize less on break
-  fg[0] += 50 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
-}
-```
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\sum&space;w_7(\delta_{t&plus;1}-\delta_t)^2&space;&plus;&space;w_8(a_{t&plus;1}-a_t)^2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\sum&space;w_7(\delta_{t&plus;1}-\delta_t)^2&space;&plus;&space;w_8(a_{t&plus;1}-a_t)^2" title="\sum w_7(\delta_{t+1}-\delta_t)^2 + w_8(a_{t+1}-a_t)^2" /></a>
+
 ### Choice of Parameters
-Since the road orientation (the curvature) changes quite often, I chose 25 time steps (N) for the project with dt of 0.05s, that seems to be a reasonable choice with enough estimations going forward. 
+Since the road orientation (the curvature) changes quite often, I chose 20 time steps (N) for the project with dt of 0.1s, that seems to be a reasonable choice with enough estimations going forward. 
 
 Different from the lecture, since the track has quite a few big turns, for this project, in order to make the vehicle finish one lap, the throttle and big angle turns need to be penalized less.
 
 ### Polynomial fitting
-Since the , location of the lane marks should be transformed to vehicle coordinates.
+Since the fitted coordinates are from the vechicle's perspective, measured locations of the lane marks should be transformed to vehicle coordinates. After the transform, a third order polynomial is fitted to get the cte tracking and orientation error.
 
 ### Handling Latency
-To compensate latency, state is predicted after a certain latency.
+To compensate latency, state is predicted after a certain latency. And that state is passed to the optimization solver to get the control variable. 
 
 ## Dependencies
 
