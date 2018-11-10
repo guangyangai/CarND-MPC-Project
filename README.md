@@ -4,18 +4,37 @@ Self-Driving Car Engineer Nanodegree Program
 ---
 ## Summary 
 ### Description of the model (including the state, actuators and update equations)
-State variables:  px (x coordinate), py(x coordinate), psi(orientation), v(velocity), cte(location tracking error), epsi(orientation tracking error);
+The MPC model is an optimization model which optimizes the total cost given predicted locations of the vehicle and certain constraints. The total cost includes tracking error, control cost and control rate cost. The objective is to find optimal control variable or actuators so that the vechicle can run on the road. 
 
-Actuator variables: steering and throttle 
+####State variables
+px (x coordinate), py(x coordinate), psi(orientation), v(velocity), cte(location tracking error), epsi(orientation tracking error);
 
-Constraints 
+Actuator variables: steering (\delta) and throttle (a)
 
-Objective function:
+####Constraints 
+x_{t+1}=x(t)+vtcos(\psi_t)*dt
+
+y_{t+1} = y_t + v_t sin(\psi_t) * dt
+
+\psi_{t+1} = \psi_t + \frac {v_t} { L_f} \delta_t * dt
+
+v_{t+1} = v_t + a_t * dt
+
+cte_{t+1} = f(x_t) - y_t + (v_t sin(e\psi_t) dt)
+
+e\psi_{t+1} = \psi_t - \psi{des}_t + (\frac{v_t} { L_f} \delta_t dt)
+
+-25 \leq \psi \leq 25
+-1 \leq \delta \leq 1
+-1 \leq a \leq 1
+
+
+####Objective function:
 minimize tracking error:
 ```    
 for (int t = 0; t < N; t++) {
-      fg[0] += 2000*CppAD::pow(vars[cte_start + t], 2);
-      fg[0] += 2000*CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += 100*CppAD::pow(vars[cte_start + t], 2);
+      fg[0] += 100*CppAD::pow(vars[epsi_start + t], 2);
       fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 ```
