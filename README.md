@@ -12,7 +12,8 @@ px (x coordinate), py(x coordinate), psi(orientation), v(velocity), cte(location
 Actuator variables: steering (\delta) and throttle (a)
 
 ####Constraints 
-x_{t+1}=x(t)+vtcos(\psi_t)*dt
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=x_{t&plus;1}=x_t&plus;v_tcos(\psi_t)*dt" target="_blank"><img src="https://latex.codecogs.com/gif.latex?x_{t&plus;1}=x_t&plus;v_tcos(\psi_t)*dt" title="x_{t+1}=x_t+v_tcos(\psi_t)*dt" /></a>
 
 y_{t+1} = y_t + v_t sin(\psi_t) * dt
 
