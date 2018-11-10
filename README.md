@@ -16,22 +16,20 @@ Actuator variables: steering (\delta) and throttle (a)
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=x_{t&plus;1}=x_t&plus;v_tcos(\psi_t)*dt" target="_blank"><img src="https://latex.codecogs.com/gif.latex?x_{t&plus;1}=x_t&plus;v_tcos(\psi_t)*dt" title="x_{t+1}=x_t+v_tcos(\psi_t)*dt" /></a>
 
-y_{t+1} = y_t + v_t sin(\psi_t) * dt
+<a href="https://www.codecogs.com/eqnedit.php?latex=y_{t&plus;1}&space;=&space;y_t&space;&plus;&space;v_t&space;sin(\psi_t)&space;*&space;dt" target="_blank"><img src="https://latex.codecogs.com/gif.latex?y_{t&plus;1}&space;=&space;y_t&space;&plus;&space;v_t&space;sin(\psi_t)&space;*&space;dt" title="y_{t+1} = y_t + v_t sin(\psi_t) * dt" /></a>
 
-\psi_{t+1} = \psi_t + \frac {v_t} { L_f} \delta_t * dt
+<a href="https://www.codecogs.com/eqnedit.php?latex=\psi_{t&plus;1}&space;=&space;\psi_t&space;&plus;&space;\frac&space;{v_t}&space;{&space;L_f}&space;\delta_t&space;*&space;dt" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\psi_{t&plus;1}&space;=&space;\psi_t&space;&plus;&space;\frac&space;{v_t}&space;{&space;L_f}&space;\delta_t&space;*&space;dt" title="\psi_{t+1} = \psi_t + \frac {v_t} { L_f} \delta_t * dt" /></a>
 
-v_{t+1} = v_t + a_t * dt
+<a href="https://www.codecogs.com/eqnedit.php?latex=cte_{t&plus;1}&space;=&space;f(x_t)&space;-&space;y_t&space;&plus;&space;(v_t&space;sin(e\psi_t)&space;dt)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cte_{t&plus;1}&space;=&space;f(x_t)&space;-&space;y_t&space;&plus;&space;(v_t&space;sin(e\psi_t)&space;dt)" title="cte_{t+1} = f(x_t) - y_t + (v_t sin(e\psi_t) dt)" /></a>
 
-cte_{t+1} = f(x_t) - y_t + (v_t sin(e\psi_t) dt)
-
-e\psi_{t+1} = \psi_t - \psi{des}_t + (\frac{v_t} { L_f} \delta_t dt)
-
+<a href="https://www.codecogs.com/eqnedit.php?latex=e\psi_{t&plus;1}&space;=&space;\psi_t&space;-&space;\psi{des}_t&space;&plus;&space;(\frac{v_t}&space;{&space;L_f}&space;\delta_t&space;dt)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?e\psi_{t&plus;1}&space;=&space;\psi_t&space;-&space;\psi{des}_t&space;&plus;&space;(\frac{v_t}&space;{&space;L_f}&space;\delta_t&space;dt)" title="e\psi_{t+1} = \psi_t - \psi{des}_t + (\frac{v_t} { L_f} \delta_t dt)" /></a>
 -25 \leq \psi \leq 25
 -1 \leq \delta \leq 1
 -1 \leq a \leq 1
 
 
 *Objective function*
+
 minimize tracking error:
 ```    
 for (int t = 0; t < N; t++) {
