@@ -1,4 +1,5 @@
 #include "MPC.h"
+#include <math.h>
 #include <cppad/cppad.hpp>
 #include <cppad/ipopt/solve.hpp>
 #include "Eigen-3.3/Eigen/Core"
@@ -6,8 +7,8 @@
 using CppAD::AD;
 
 // TODO: Set the timestep length and duration
-size_t N = 25;
-double dt = 0.05;
+size_t N = 20;
+double dt = 0.1;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -21,7 +22,7 @@ double dt = 0.05;
 // This is the length from front to CoG that has a similar radius.
 const double Lf = 2.67;
 // reference velocity
-double ref_v = 40;
+double ref_v = 50;
 // location of variables 
 size_t x_start = 0;
 size_t y_start = x_start + N;
@@ -47,8 +48,8 @@ class FG_eval {
     fg[0] = 0;
     // The part of the cost based on the reference state. Use next timestep to calculate cost
     for (int t = 0; t < N; t++) {
-      fg[0] += CppAD::pow(vars[cte_start + t], 2);
-      fg[0] += CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += 100*CppAD::pow(vars[cte_start + t], 2); //100
+      fg[0] += 100*CppAD::pow(vars[epsi_start + t], 2); //100
       fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 
@@ -56,12 +57,16 @@ class FG_eval {
     for (int t = 0; t < N - 1; t++) {
       fg[0] += CppAD::pow(vars[delta_start + t], 2);
       fg[0] += CppAD::pow(vars[a_start + t], 2);
+      //penalize big turn when speed is high
+      fg[0] += 1000*CppAD::pow(vars[delta_start + t] * vars[v_start + t], 2); //1000
     }
 
     // Minimize the value gap between sequential actuations.
     for (int t = 0; t < N - 2; t++) {
-      fg[0] += 500 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-      fg[0] += 500 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+      //in our case, we do need big turn
+      fg[0] += 100 * CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2); //100, 200, 50
+      //penalize less on break
+      fg[0] += 10 * CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
     }
     // add 1 to each of the starting indices due to cost being located at
     // index 0 of `fg`.
@@ -96,16 +101,17 @@ class FG_eval {
       AD<double> a0 = vars[a_start + t - 1];
 
       AD<double> f0 = coeffs[0] + coeffs[1] * x0 + coeffs[2] * x0 * x0 + coeffs[3] * x0 * x0 * x0;
-      AD<double> psides0 = CppAD::atan(coeffs[1] + 2 * coeffs[2] * x0 + 3 * coeffs[3] * x0 * x0);
+      AD<double> psides0 = CppAD::atan(coeffs[1] + 2 * coeffs[2] * x0 + 3 * coeffs[3] * CppAD::pow(x0, 2));
 
       fg[1 + x_start + t] = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
       fg[1 + y_start + t] = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
-      fg[1 + psi_start + t] = psi1 + (psi0 + v0 * delta0 / Lf * dt);
+      //for the simulator positive steering is turn right
+      fg[1 + psi_start + t] = psi1 - (psi0 - v0 * delta0 / Lf * dt);
       fg[1 + v_start + t] = v1 - (v0 + a0 * dt);
       fg[1 + cte_start + t] =
           cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
       fg[1 + epsi_start + t] =
-          epsi1 - ((psi0 - psides0) + v0 * delta0 / Lf * dt);
+          epsi1 - ((psi0 - psides0) - v0 * delta0 / Lf * dt);
     }
   }
 };
@@ -131,7 +137,7 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // element vector and there are 10 timesteps. The number of variables is:
   //
   // 4 * 10 + 2 * 9
-  size_t n_vars = 4 * N + 2 * ( N - 1 );
+  size_t n_vars = 6 * N + 2 * ( N - 1 );
   // TODO: Set the number of constraints
   size_t n_constraints = N * 6;
 
@@ -236,8 +242,14 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   //
   // {...} is shorthand for creating a vector, so auto x1 = {1.0,2.0}
   // creates a 2 element double vector.
-  return {solution.x[x_start + 1],   solution.x[y_start + 1],
-          solution.x[psi_start + 1], solution.x[v_start + 1],
-          solution.x[cte_start + 1], solution.x[epsi_start + 1],
-          solution.x[delta_start],   solution.x[a_start]};
+  vector<double> result;
+  //push bacck actuators
+  result.push_back(solution.x[delta_start]);
+  result.push_back(solution.x[a_start]);
+  //push back x,y coordinates in next N steps
+  for (int i = 0; i < N-1; i++) {
+    result.push_back(solution.x[x_start + i + 1]);
+    result.push_back(solution.x[y_start + i + 1]);
+  }
+  return result;
 }
