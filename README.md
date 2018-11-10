@@ -23,10 +23,12 @@ Actuator variables: steering (\delta) and throttle (a)
 <a href="https://www.codecogs.com/eqnedit.php?latex=cte_{t&plus;1}&space;=&space;f(x_t)&space;-&space;y_t&space;&plus;&space;(v_t&space;sin(e\psi_t)&space;dt)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?cte_{t&plus;1}&space;=&space;f(x_t)&space;-&space;y_t&space;&plus;&space;(v_t&space;sin(e\psi_t)&space;dt)" title="cte_{t+1} = f(x_t) - y_t + (v_t sin(e\psi_t) dt)" /></a>
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=e\psi_{t&plus;1}&space;=&space;\psi_t&space;-&space;\psi{des}_t&space;&plus;&space;(\frac{v_t}&space;{&space;L_f}&space;\delta_t&space;dt)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?e\psi_{t&plus;1}&space;=&space;\psi_t&space;-&space;\psi{des}_t&space;&plus;&space;(\frac{v_t}&space;{&space;L_f}&space;\delta_t&space;dt)" title="e\psi_{t+1} = \psi_t - \psi{des}_t + (\frac{v_t} { L_f} \delta_t dt)" /></a>
--25 \leq \psi \leq 25
--1 \leq \delta \leq 1
--1 \leq a \leq 1
 
+<a href="https://www.codecogs.com/eqnedit.php?latex=-25&space;$^\circ$&space;\leq&space;\psi&space;\leq&space;25$^\circ$" target="_blank"><img src="https://latex.codecogs.com/gif.latex?-25&space;$^\circ$&space;\leq&space;\psi&space;\leq&space;25$^\circ$" title="-25 $^\circ$ \leq \psi \leq 25$^\circ$" /></a>
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=-1&space;\leq&space;a&space;\leq&space;1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?-1&space;\leq&space;a&space;\leq&space;1" title="-1 \leq a \leq 1" /></a>
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=-1&space;\leq&space;\delta&space;\leq&space;1" target="_blank"><img src="https://latex.codecogs.com/gif.latex?-1&space;\leq&space;\delta&space;\leq&space;1" title="-1 \leq \delta \leq 1" /></a>
 
 *Objective function*
 
