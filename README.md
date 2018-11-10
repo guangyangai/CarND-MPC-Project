@@ -6,12 +6,13 @@ Self-Driving Car Engineer Nanodegree Program
 ### Description of the model (including the state, actuators and update equations)
 The MPC model is an optimization model which optimizes the total cost given predicted locations of the vehicle and certain constraints. The total cost includes tracking error, control cost and control rate cost. The objective is to find optimal control variable or actuators so that the vechicle can run on the road. 
 
-####State variables
+*State variables*
+
 px (x coordinate), py(x coordinate), psi(orientation), v(velocity), cte(location tracking error), epsi(orientation tracking error);
 
 Actuator variables: steering (\delta) and throttle (a)
 
-####Constraints 
+*Constraints*
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=x_{t&plus;1}=x_t&plus;v_tcos(\psi_t)*dt" target="_blank"><img src="https://latex.codecogs.com/gif.latex?x_{t&plus;1}=x_t&plus;v_tcos(\psi_t)*dt" title="x_{t+1}=x_t+v_tcos(\psi_t)*dt" /></a>
 
@@ -30,7 +31,7 @@ e\psi_{t+1} = \psi_t - \psi{des}_t + (\frac{v_t} { L_f} \delta_t dt)
 -1 \leq a \leq 1
 
 
-####Objective function:
+*Objective function*
 minimize tracking error:
 ```    
 for (int t = 0; t < N; t++) {
